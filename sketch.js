@@ -12,6 +12,8 @@ var score=0;
 
 var gameOver, restart;
 
+var dieSound, jumpSound, checkPointSound;
+
 localStorage["HighestScore"] = 0;
 
 function preload(){
@@ -31,6 +33,10 @@ function preload(){
   
   gameOverImg = loadImage("gameOver.png");
   restartImg = loadImage("restart.png");
+  
+  jumpSound = loadSound("jump.mp3");
+  dieSound = loadSound("die.mp3");
+  checkPointSound = loadSound("checkPoint.mp3");
 }
 
 function setup() {
@@ -75,10 +81,15 @@ function draw() {
   
   if (gameState===PLAY){
     score = score + Math.round(getFrameRate()/60);
+    if (score>0 && score%100 === 0){
+      checkPointSound.play();
+    }
+    
     ground.velocityX = -(6 + 3*score/100);
   
     if(keyDown("space") && trex.y >= 159) {
       trex.velocityY = -12;
+      jumpSound.play();
     }
   
     trex.velocityY = trex.velocityY + 0.8
@@ -93,6 +104,7 @@ function draw() {
   
     if(obstaclesGroup.isTouching(trex)){
         gameState = END;
+        dieSound.play();
     }
   }
   else if (gameState === END) {
